@@ -2,7 +2,7 @@
 #include "perl.h"
 #include "XSUB.h"
 
-#include </home/foof/src/cvs/xiph/ao/include/ao/ao.h>
+#include <ao/ao.h>
 
 static int
 not_here(char *s)

@@ -6,7 +6,7 @@
 #
 #	ANY CHANGES MADE HERE WILL BE LOST!
 #
-#   MakeMaker ARGV: ()
+#   MakeMaker ARGV: (q[PREFIX=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr], q[LIB=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/lib/perl5/5.005/], q[INSTALLMAN1DIR=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/share/man/man1], q[INSTALLMAN3DIR=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/share/man/man3])
 #
 #   MakeMaker Parameters:
 
@@ -57,12 +57,12 @@ INST_EXE = blib/script
 INST_LIB = blib/lib
 INST_ARCHLIB = blib/arch
 INST_SCRIPT = blib/script
-PREFIX = /usr
+PREFIX = /home/foof/src/projects/libao-perl-0.03/debian/tmp/usr
 INSTALLDIRS = site
-INSTALLPRIVLIB = $(PREFIX)/lib/perl5
-INSTALLARCHLIB = $(PREFIX)/lib/perl5/5.005/i386-linux
-INSTALLSITELIB = /usr/local/lib/site_perl
-INSTALLSITEARCH = /usr/local/lib/site_perl/i386-linux
+INSTALLPRIVLIB = /home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/lib/perl5/5.005/
+INSTALLARCHLIB = /home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/lib/perl5/5.005/i386-linux
+INSTALLSITELIB = /home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/lib/perl5/5.005/
+INSTALLSITEARCH = /home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/lib/perl5/5.005/i386-linux
 INSTALLBIN = $(PREFIX)/bin
 INSTALLSCRIPT = $(PREFIX)/bin
 PERL_LIB = /usr/lib/perl5/5.005
@@ -105,13 +105,13 @@ XS_FILES= Ao.xs
 C_FILES = Ao.c
 O_FILES = Ao.o
 H_FILES = 
-MAN1PODS = 
+MAN1PODS = pcmplay
 MAN3PODS = Ao.pm
 INST_MAN1DIR = blib/man1
-INSTALLMAN1DIR = /usr/local/man/man1
+INSTALLMAN1DIR = /home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/share/man/man1
 MAN1EXT = 1p
 INST_MAN3DIR = blib/man3
-INSTALLMAN3DIR = /usr/local/man/man3
+INSTALLMAN3DIR = /home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/share/man/man3
 MAN3EXT = 3pm
 PERM_RW = 644
 PERM_RWX = 755
@@ -260,7 +260,7 @@ SPLIT =
 EXTRALIBS = -lao
 LDLOADLIBS = -lao
 BSLOADLIBS = 
-LD_RUN_PATH = /usr/local/lib
+LD_RUN_PATH = /usr/lib
 
 
 # --- MakeMaker const_cccmd section:
@@ -354,6 +354,16 @@ $(INST_ARCHAUTODIR)/.exists :: /usr/lib/perl5/5.005/i386-linux/CORE/perl.h
 	@$(EQUALIZE_TIMESTAMP) /usr/lib/perl5/5.005/i386-linux/CORE/perl.h $(INST_ARCHAUTODIR)/.exists
 
 	-@$(CHMOD) $(PERM_RWX) $(INST_ARCHAUTODIR)
+
+config :: $(INST_MAN1DIR)/.exists
+	@$(NOOP)
+
+
+$(INST_MAN1DIR)/.exists :: /usr/lib/perl5/5.005/i386-linux/CORE/perl.h
+	@$(MKPATH) $(INST_MAN1DIR)
+	@$(EQUALIZE_TIMESTAMP) /usr/lib/perl5/5.005/i386-linux/CORE/perl.h $(INST_MAN1DIR)/.exists
+
+	-@$(CHMOD) $(PERM_RWX) $(INST_MAN1DIR)
 
 config :: $(INST_MAN3DIR)/.exists
 	@$(NOOP)
@@ -453,8 +463,11 @@ POD2MAN = $(PERL) -we '%m=@ARGV;for (keys %m){' \
 -e 'system(qq[$$^X ].q["-I$(PERL_ARCHLIB)" "-I$(PERL_LIB)" $(POD2MAN_EXE) ].qq[$$_>$$m{$$_}])==0 or warn "Couldn\047t install $$m{$$_}\n";' \
 -e 'chmod(oct($(PERM_RW))), $$m{$$_} or warn "chmod $(PERM_RW) $$m{$$_}: $$!\n";}'
 
-manifypods : pure_all Ao.pm
+manifypods : pure_all pcmplay \
+	Ao.pm
 	@$(POD2MAN) \
+	pcmplay \
+	$(INST_MAN1DIR)/pcmplay.$(MAN1EXT) \
 	Ao.pm \
 	$(INST_MAN3DIR)/Ao.$(MAN3EXT)
 
@@ -704,7 +717,7 @@ Makefile : Makefile.PL $(CONFIGDEP)
 	-@$(RM_F) Makefile.old
 	-@$(MV) Makefile Makefile.old
 	-$(MAKE) -f Makefile.old clean $(DEV_NULL) || $(NOOP)
-	$(PERL) "-I$(PERL_ARCHLIB)" "-I$(PERL_LIB)" Makefile.PL 
+	$(PERL) "-I$(PERL_ARCHLIB)" "-I$(PERL_LIB)" Makefile.PL "PREFIX=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr" "LIB=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/lib/perl5/5.005/" "INSTALLMAN1DIR=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/share/man/man1" "INSTALLMAN3DIR=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/share/man/man3"
 	@echo "==> Your Makefile has been rebuilt. <=="
 	@echo "==> Please rerun the make command.  <=="
 	false
@@ -729,7 +742,11 @@ $(MAKE_APERL_FILE) : $(FIRST_MAKEFILE)
 	@$(PERL) -I$(INST_ARCHLIB) -I$(INST_LIB) -I$(PERL_ARCHLIB) -I$(PERL_LIB) \
 		Makefile.PL DIR= \
 		MAKEFILE=$(MAKE_APERL_FILE) LINKTYPE=static \
-		MAKEAPERL=1 NORECURS=1 CCCDLFLAGS=
+		MAKEAPERL=1 NORECURS=1 CCCDLFLAGS= \
+		PREFIX=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr \
+		LIB=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/lib/perl5/5.005/ \
+		INSTALLMAN1DIR=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/share/man/man1 \
+		INSTALLMAN3DIR=/home/foof/src/projects/libao-perl-0.03/debian/tmp/usr/share/man/man3
 
 
 # --- MakeMaker test section:
